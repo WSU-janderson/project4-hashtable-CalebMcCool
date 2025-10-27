@@ -40,6 +40,9 @@ class HashTable {
 private:
 
 public:
+    //Variables
+    std::vector<HashTableBucket> tableData;
+
     //Constructor [done]
     HashTable(size_t initCapacity = 8);
 
@@ -58,6 +61,9 @@ public:
     //[] Overload Method
     size_t& operator[](const std::string& key);
 
+    //Hashing Algorithm Method
+    size_t hash(const std::string& key);
+
     //Keys
     std::vector<std::string> keys() const;
 
@@ -70,7 +76,7 @@ public:
     //Get Size Method
     size_t size() const;
 
-    std::vector<HashTableBucket> tableData;
+
 
 
 };
