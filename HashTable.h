@@ -9,6 +9,8 @@
 #define HashTable_h
 #include <string>
 #include <vector>
+#include <cstdlib>
+#include <ctime>
 
 /*
  * Hash Table Bucket class
@@ -42,6 +44,7 @@ private:
 public:
     //Variables
     std::vector<HashTableBucket> tableData;
+    std::vector<size_t> offsets;
 
     //Constructor [done]
     HashTable(size_t initCapacity = 8);
@@ -76,9 +79,20 @@ public:
     //Get Size Method
     size_t size() const;
 
+    //-- Personal Methods --
+
+    //next bucket according to offset vector
+    HashTableBucket& nextBucket(size_t index);
+
+    //next bucket with ESS or EAR
+    HashTableBucket& nextEmptyBucket;
+
+    //next bucket with ESS
+    HashTableBucket& nextEmptySinceStart;
+
 
 
 
 };
 
-#endif HashTable_h
+#endif
