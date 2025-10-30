@@ -18,8 +18,8 @@ int main() {
     testTable1.insert("testkey2", 1233);
     testTable1.insert("testKey334", 5000);
 
-    std::cout << "----Test Table 1----" << std::endl;
-    //for (size_t i=0; i<testTable1.tableData.size(); i++){
+    std::cout << "----Offset Vector----" << std::endl;
+    //for (size_t i=0; i<testTable1.v; i++){
         //std::cout << testTable1.tableData.at(i) << std::endl;
     //}
     std::cout << "----End Test----" << std::endl;

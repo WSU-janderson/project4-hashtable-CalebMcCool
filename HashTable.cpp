@@ -44,6 +44,11 @@ HashTable::HashTable(size_t initCapacity){
         HashTableBucket bucket;
         tableData.push_back(bucket);
     }
+
+    //TESTING TESTING TESTING TETING TESTING
+    for (size_t i=0; i < offsets.size(); i++){
+        std::cout << offsets.at(i) << std::endl;
+    }
 }
 
 // UNFINISHED
@@ -54,49 +59,45 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
     size_t h = myHash(key);
     size_t index = h % tableData.size();
 
-    //Adding key to Table
-    HashTableBucket& currentBucket = tableData.at(index);
 
-
-
-    bool notPositioned = true;
-
-    size_t offsetIndex = 0;
-    for (size_t i : offsets){
-        if (i == index){
-            break;
-        }
-        offsetIndex++;
+bool notPositioned = true;
+size_t newHashTableIndex = 0;
+    HashTableBucket &currentBucket = tableData.at(index);
+while(notPositioned) {
+    if (currentBucket.type == HashTableBucket::BucketType::ESS) {
+        currentBucket.key = key;
+        currentBucket.value = value;
+        currentBucket.type = HashTableBucket::BucketType::Normal;
+        break;
     }
+    if (currentBucket.type == HashTableBucket::BucketType::EAR) {
+        currentBucket.key = key;
+        currentBucket.value = value;
+        currentBucket.type = HashTableBucket::BucketType::Normal;
+        break;
 
-    size_t offsetIncrement = index;
-    while (notPositioned) {
-        //If the bucket is empty since start, insert key value pair.
-        if (currentBucket.type == HashTableBucket::BucketType::ESS) {
-            currentBucket.key = key;
-            currentBucket.value = value;
-            currentBucket.type = HashTableBucket::BucketType::Normal;
-            break;
-        }
-
-        //If the bucket is empty after removal, insert key value pair
-        else if (currentBucket.type == HashTableBucket::BucketType::EAR) {
-            currentBucket.key = key;
-            currentBucket.value = value;
-            currentBucket.type = HashTableBucket::BucketType::Normal;
-            break;
-        }
-
-        //If the bucket is normal (occupied), go to next index
-        else {
-            if (offsetIncrement > offsets.size()){
-                offsetIncrement = offsets.at(0);
+    }
+    if (currentBucket.type == HashTableBucket::BucketType::Normal) {
+        //Search Offset Vector for Home Index of Hash Table
+        size_t offsetIndex = 0;
+        for (size_t i = 0; i < offsets.size(); i++) {
+            if (offsets.at(i) == index) {
+                offsetIndex = i;
+                break;
             }
-
-            currentBucket = tableData.at(offsetIncrement);
-            continue;
         }
+
+        //Increment Offset Vector Position by 1
+        offsetIndex = offsetIndex + 1;
+        if (offsetIndex > offsets.size()) {
+            offsetIndex = 0;
+        }
+
+        newHashTableIndex = offsets.at(offsetIndex);
+        currentBucket = tableData.at(newHashTableIndex);
     }
+}
+
 
 
 
@@ -104,5 +105,7 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
 }
 
 HashTableBucket& HashTable::nextBucket(size_t index){
+    HashTableBucket currentBucket;
 
+    return currentBucket;
 }

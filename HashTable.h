@@ -85,10 +85,10 @@ public:
     HashTableBucket& nextBucket(size_t index);
 
     //next bucket with ESS or EAR
-    HashTableBucket& nextEmptyBucket;
+    //HashTableBucket& nextEmptyBucket;
 
     //next bucket with ESS
-    HashTableBucket& nextEmptySinceStart;
+    //HashTableBucket& nextEmptySinceStart;
 
 
 
