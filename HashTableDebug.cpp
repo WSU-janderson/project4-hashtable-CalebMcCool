@@ -14,26 +14,27 @@ int main() {
     std::cout << testTable1.tableData.size() << std::endl;
 
     testTable1.insert("testkey", 1100);
-    testTable1.insert("testkey59", 1100);
-    testTable1.insert("testkey59", 1103);
-    testTable1.insert("testkey3", 1100);
-    std::cout << "After 3 adds" << std::endl;
-    std::cout << testTable1;
-    testTable1.insert("testkey4", 1100);
-    testTable1.insert("testkey5", 1100);
-    testTable1.insert("testkey6", 1100);
-    std::cout << "After 6 adds" << std::endl;
-    std::cout << testTable1;
-    testTable1.insert("testkey7", 1100);
-    testTable1.insert("testkey8", 1100);
-    testTable1.insert("testkey9", 1100);
-
-    std::cout << "After 9 adds" << std::endl;
+    testTable1.insert("something else", 7777);
+    testTable1.insert("testkey487", 10);
     std::cout << testTable1;
 
-    //testTable1.remove("testkey2");
-    testTable1.remove("testkey4");
-    bool contains = testTable1.contains("testkey2");
+
+    auto keyValue = testTable1.get("something else");
+
+    testTable1.insert("testkey487", 1440);
+    testTable1.insert("testkey488", 120);
+    testTable1.insert("testkey489", 180);
+    testTable1.insert("testkey482", 109);
+    testTable1.insert("testkey483", 120);
+    testTable1.insert("testkey484", 1770);
+    testTable1.insert("testkey485", 109);
+    testTable1.insert("testkey486", 108);
+
+    keyValue = testTable1.get("something else");
+
+    keyValue = testTable1.get("testkey486");
+
+    testTable1.remove("testkey486");
 
     std::cout << "----End Test----" << std::endl;
 

@@ -223,6 +223,46 @@ bool HashTable::remove(const std::string& key){
     return false;
 }
 
+std::optional<size_t> HashTable::get(const std::string& key) const {
+    //Hashing String input
+    std::hash<std::string> myHash;
+    size_t h = myHash(key);
+    size_t index = h % tableData.size();
+
+    bool notFound = true;
+    size_t newHashTableIndex = 0;
+
+
+    while (notFound){
+        const HashTableBucket &currentBucket = tableData.at(index);
+        if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
+            return currentBucket.value;
+        }
+
+        if (currentBucket.type == HashTableBucket::BucketType::ESS){
+            return std::nullopt;
+        }
+
+        else {
+            size_t offsetIndex = 0;
+            for (size_t i=0; i<offsets.size(); i++){
+                if (offsets.at(i) == index){
+                    offsetIndex = i;
+                    break;
+                }
+            }
+
+            offsetIndex = offsetIndex + 1;
+            if (offsetIndex >= offsets.size()) {
+                offsetIndex = 0;
+            }
+
+            newHashTableIndex = offsets.at(offsetIndex);
+            index = newHashTableIndex;
+        }
+    }
+}
+
 double HashTable::alpha() const{
     if (tableData.empty()){
         return 0.0;
