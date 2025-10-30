@@ -82,7 +82,7 @@ public:
     //-- Personal Methods --
 
     //next bucket according to offset vector
-    HashTableBucket& nextBucket(size_t index);
+    //HashTableBucket& nextBucket(size_t index);
 
     //next bucket with ESS or EAR
     //HashTableBucket& nextEmptyBucket;

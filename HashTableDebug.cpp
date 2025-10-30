@@ -16,12 +16,10 @@ int main() {
     testTable1.insert("testkey", 1234);
     testTable1.insert("testkey2", 1233);
     testTable1.insert("testkey2", 1233);
-    testTable1.insert("testKey334", 5000);
+    bool contains = testTable1.contains("testkey3");
 
-    std::cout << "----Offset Vector----" << std::endl;
-    //for (size_t i=0; i<testTable1.v; i++){
-        //std::cout << testTable1.tableData.at(i) << std::endl;
-    //}
+    std::cout << "----Contains testkey2? ----" << std::endl;
+
     std::cout << "----End Test----" << std::endl;
 
     return 0;

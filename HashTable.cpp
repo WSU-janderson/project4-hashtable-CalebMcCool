@@ -51,8 +51,6 @@ HashTable::HashTable(size_t initCapacity){
     }
 }
 
-// UNFINISHED
-// Replace % 8 with actual size function once implemented
 bool HashTable::insert(const std::string &key, const size_t &value) {
     //Hashing key and Retrieving Home Position
     std::hash<std::string> myHash;
@@ -60,52 +58,83 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
     size_t index = h % tableData.size();
 
 
-bool notPositioned = true;
-size_t newHashTableIndex = 0;
+    bool notPositioned = true;
+    size_t newHashTableIndex = 0;
     HashTableBucket &currentBucket = tableData.at(index);
-while(notPositioned) {
-    if (currentBucket.type == HashTableBucket::BucketType::ESS) {
-        currentBucket.key = key;
-        currentBucket.value = value;
-        currentBucket.type = HashTableBucket::BucketType::Normal;
-        break;
-    }
-    if (currentBucket.type == HashTableBucket::BucketType::EAR) {
-        currentBucket.key = key;
-        currentBucket.value = value;
-        currentBucket.type = HashTableBucket::BucketType::Normal;
-        break;
+    while(notPositioned) {
+        if (currentBucket.type == HashTableBucket::BucketType::ESS) {
+            currentBucket.key = key;
+            currentBucket.value = value;
+            currentBucket.type = HashTableBucket::BucketType::Normal;
+            break;
+        }
+        if (currentBucket.type == HashTableBucket::BucketType::EAR) {
+            currentBucket.key = key;
+            currentBucket.value = value;
+            currentBucket.type = HashTableBucket::BucketType::Normal;
+            break;
 
-    }
-    if (currentBucket.type == HashTableBucket::BucketType::Normal) {
-        //Search Offset Vector for Home Index of Hash Table
-        size_t offsetIndex = 0;
-        for (size_t i = 0; i < offsets.size(); i++) {
-            if (offsets.at(i) == index) {
-                offsetIndex = i;
-                break;
+        }
+        if (currentBucket.type == HashTableBucket::BucketType::Normal) {
+            //Search Offset Vector for Home Index of Hash Table
+            size_t offsetIndex = 0;
+            for (size_t i = 0; i < offsets.size(); i++) {
+                if (offsets.at(i) == index) {
+                    offsetIndex = i;
+                    break;
+                }
             }
-        }
 
-        //Increment Offset Vector Position by 1
-        offsetIndex = offsetIndex + 1;
-        if (offsetIndex > offsets.size()) {
-            offsetIndex = 0;
-        }
+            //Increment Offset Vector Position by 1
+            offsetIndex = offsetIndex + 1;
+            if (offsetIndex > offsets.size()) {
+                offsetIndex = 0;
+            }
 
-        newHashTableIndex = offsets.at(offsetIndex);
-        currentBucket = tableData.at(newHashTableIndex);
+            newHashTableIndex = offsets.at(offsetIndex);
+            currentBucket = tableData.at(newHashTableIndex);
+        }
     }
-}
-
-
-
-
     return false;
 }
 
-HashTableBucket& HashTable::nextBucket(size_t index){
-    HashTableBucket currentBucket;
+bool HashTable::contains(const std::string& key) const{
+    //Hashing key and Retrieving Home Position
+    std::hash<std::string> myHash;
+    size_t h = myHash(key);
+    size_t index = h % tableData.size();
 
-    return currentBucket;
+    bool notFound = true;
+    size_t newHashTableIndex = 0;
+    HashTableBucket currentBucket = tableData.at(index);
+
+    while (notFound){
+        if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
+            return true;
+        }
+
+        if (currentBucket.type == HashTableBucket::BucketType::ESS){
+            return false;
+        }
+
+        else {
+            size_t offsetIndex = 0;
+            for (size_t i=0; i<offsets.size(); i++){
+                if (offsets.at(i) == index){
+                    offsetIndex = i;
+                    break;
+                }
+            }
+
+            offsetIndex = offsetIndex + 1;
+            if (offsetIndex >= offsets.size()) {
+                offsetIndex = 0;
+            }
+
+            newHashTableIndex = offsets.at(offsetIndex);
+            currentBucket = tableData.at(newHashTableIndex);
+            index = newHashTableIndex;
+        }
+    }
 }
+
