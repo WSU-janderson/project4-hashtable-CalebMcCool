@@ -223,6 +223,7 @@ bool HashTable::remove(const std::string& key){
     return false;
 }
 
+//Get Method
 std::optional<size_t> HashTable::get(const std::string& key) const {
     //Hashing String input
     std::hash<std::string> myHash;
@@ -263,12 +264,68 @@ std::optional<size_t> HashTable::get(const std::string& key) const {
     }
 }
 
+//Operator [] Overload
+size_t& HashTable::operator[](const std::string& key){
+    //Hashing String input
+    std::hash<std::string> myHash;
+    size_t h = myHash(key);
+    size_t index = h % tableData.size();
+
+    bool notFound = true;
+    size_t newHashTableIndex = 0;
+
+
+    while (notFound){
+        HashTableBucket &currentBucket = tableData.at(index);
+        if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
+            return currentBucket.value;
+        }
+
+        if (currentBucket.type == HashTableBucket::BucketType::ESS){
+            //Throw Exception
+        }
+
+        else {
+            size_t offsetIndex = 0;
+            for (size_t i=0; i<offsets.size(); i++){
+                if (offsets.at(i) == index){
+                    offsetIndex = i;
+                    break;
+                }
+            }
+
+            offsetIndex = offsetIndex + 1;
+            if (offsetIndex >= offsets.size()) {
+                offsetIndex = 0;
+            }
+
+            newHashTableIndex = offsets.at(offsetIndex);
+            index = newHashTableIndex;
+        }
+    }
+}
+
+std::vector<std::string> HashTable::keys() const{
+    //Creating new vector to hold keys
+    std::vector<std::string> listOfKeys;
+
+    for (const HashTableBucket &current : tableData){
+        if (current.type == HashTableBucket::BucketType::Normal){
+            listOfKeys.push_back(current.key);
+        }
+
+    }
+
+    return listOfKeys;
+}
+
+//Alpha Method
 double HashTable::alpha() const{
     if (tableData.empty()){
         return 0.0;
     } else {
         double alpha = 0.0;
-        alpha = static_cast<double>(numOfInserts) /static_cast<double>(tableData.size());
+        alpha = static_cast<double>(numOfInserts) / static_cast<double>(tableData.size());
         return alpha;
     }
 }
