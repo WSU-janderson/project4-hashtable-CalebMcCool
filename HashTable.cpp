@@ -44,6 +44,7 @@ HashTable::HashTable(size_t initCapacity){
         HashTableBucket bucket;
         tableData.push_back(bucket);
     }
+    numOfInserts = 0;
 
     //TESTING TESTING TESTING TETING TESTING
     for (size_t i=0; i < offsets.size(); i++){
@@ -57,7 +58,7 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
     size_t h = myHash(key);
     size_t index = h % tableData.size();
 
-
+    //Inserting Key Value Pair into the Vector
     bool notPositioned = true;
     size_t newHashTableIndex = 0;
     HashTableBucket &currentBucket = tableData.at(index);
@@ -66,12 +67,14 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
             currentBucket.key = key;
             currentBucket.value = value;
             currentBucket.type = HashTableBucket::BucketType::Normal;
+            numOfInserts++;
             break;
         }
         if (currentBucket.type == HashTableBucket::BucketType::EAR) {
             currentBucket.key = key;
             currentBucket.value = value;
             currentBucket.type = HashTableBucket::BucketType::Normal;
+            numOfInserts++;
             break;
 
         }
@@ -95,6 +98,7 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
             currentBucket = tableData.at(newHashTableIndex);
         }
     }
+
     return false;
 }
 
@@ -135,6 +139,67 @@ bool HashTable::contains(const std::string& key) const{
             currentBucket = tableData.at(newHashTableIndex);
             index = newHashTableIndex;
         }
+    }
+}
+
+bool HashTable::remove(const std::string& key){
+    //Hashing String input
+    std::hash<std::string> myHash;
+    size_t h = myHash(key);
+    size_t index = h % tableData.size();
+
+    bool notFound = true;
+    size_t newHashTableIndex = 0;
+    HashTableBucket currentBucket = tableData.at(index);
+
+    while (notFound){
+        if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
+            currentBucket.type = HashTableBucket::BucketType::EAR;
+        }
+
+        if (currentBucket.type == HashTableBucket::BucketType::ESS){
+            return false;
+        }
+
+        else {
+            size_t offsetIndex = 0;
+            for (size_t i=0; i<offsets.size(); i++){
+                if (offsets.at(i) == index){
+                    offsetIndex = i;
+                    break;
+                }
+            }
+
+            offsetIndex = offsetIndex + 1;
+            if (offsetIndex >= offsets.size()) {
+                offsetIndex = 0;
+            }
+
+            newHashTableIndex = offsets.at(offsetIndex);
+            currentBucket = tableData.at(newHashTableIndex);
+            index = newHashTableIndex;
+        }
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, const HashTable& hashTable){
+  for (size_t i=0; i<hashTable.tableData.size(); i++ ){
+      HashTableBucket currentBucket = hashTable.tableData.at(i);
+      os << "Bucket: " << i;
+      os << ", Key: " << currentBucket.key;
+      os << ", Value: " << currentBucket.value << "\n";
+  }
+
+  return os;
+}
+
+double HashTable::alpha() const{
+    if (tableData.empty()){
+        return 0.0;
+    } else {
+        double alpha = 0.0;
+        alpha = static_cast<double>(numOfInserts) /static_cast<double>(tableData.size());
+        return alpha;
     }
 }
 

@@ -11,6 +11,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <ostream>
 
 /*
  * Hash Table Bucket class
@@ -45,6 +46,7 @@ public:
     //Variables
     std::vector<HashTableBucket> tableData;
     std::vector<size_t> offsets;
+    size_t numOfInserts = 0;
 
     //Constructor [done]
     HashTable(size_t initCapacity = 8);
@@ -78,6 +80,9 @@ public:
 
     //Get Size Method
     size_t size() const;
+
+    //os
+    friend std::ostream& operator<<(std::ostream& os, const HashTable& hashTable);
 
     //-- Personal Methods --
 
