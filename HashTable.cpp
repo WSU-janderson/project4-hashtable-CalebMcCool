@@ -53,6 +53,11 @@ HashTable::HashTable(size_t initCapacity){
 }
 
 bool HashTable::insert(const std::string &key, const size_t &value) {
+    //Checking for Duplicates
+    if (this->contains(key)){
+        return false;
+    }
+
     //Hashing key and Retrieving Home Position
     std::hash<std::string> myHash;
     size_t h = myHash(key);
@@ -61,8 +66,10 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
     //Inserting Key Value Pair into the Vector
     bool notPositioned = true;
     size_t newHashTableIndex = 0;
-    HashTableBucket &currentBucket = tableData.at(index);
+
     while(notPositioned) {
+        HashTableBucket &currentBucket = tableData.at(index);
+
         if (currentBucket.type == HashTableBucket::BucketType::ESS) {
             currentBucket.key = key;
             currentBucket.value = value;
@@ -90,16 +97,47 @@ bool HashTable::insert(const std::string &key, const size_t &value) {
 
             //Increment Offset Vector Position by 1
             offsetIndex = offsetIndex + 1;
-            if (offsetIndex > offsets.size()) {
+            if (offsetIndex >= offsets.size()) {
                 offsetIndex = 0;
             }
 
             newHashTableIndex = offsets.at(offsetIndex);
-            currentBucket = tableData.at(newHashTableIndex);
+            index = newHashTableIndex;
         }
     }
 
-    return false;
+    //Increasing Size if Needed
+    if (alpha() >= 0.5){
+
+        //Creating new table
+        std::vector<HashTableBucket> tempTable = tableData;
+        size_t newSize = tableData.size() * 2;
+        tableData.clear();
+        tableData.resize(newSize);
+
+        //Updating Offset vector
+        offsets.clear();
+        for (size_t i=0; i<newSize; i++){
+            offsets.push_back(i);
+        }
+        std::random_device randomDevice;
+        std::mt19937 generator(randomDevice());
+        std::shuffle(offsets.begin(), offsets.end(), generator);
+
+
+
+        //Re-hashing old values
+        numOfInserts = 0;
+        for(HashTableBucket &current : tempTable){
+            if (current.type == HashTableBucket::BucketType::Normal){
+                insert(current.key, current.value);
+            }
+        }
+
+    }
+
+
+    return true;
 }
 
 bool HashTable::contains(const std::string& key) const{
@@ -110,9 +148,10 @@ bool HashTable::contains(const std::string& key) const{
 
     bool notFound = true;
     size_t newHashTableIndex = 0;
-    HashTableBucket currentBucket = tableData.at(index);
+
 
     while (notFound){
+        const HashTableBucket &currentBucket = tableData.at(index);
         if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
             return true;
         }
@@ -136,10 +175,10 @@ bool HashTable::contains(const std::string& key) const{
             }
 
             newHashTableIndex = offsets.at(offsetIndex);
-            currentBucket = tableData.at(newHashTableIndex);
             index = newHashTableIndex;
         }
     }
+    return false;
 }
 
 bool HashTable::remove(const std::string& key){
@@ -150,11 +189,13 @@ bool HashTable::remove(const std::string& key){
 
     bool notFound = true;
     size_t newHashTableIndex = 0;
-    HashTableBucket currentBucket = tableData.at(index);
+
 
     while (notFound){
+        HashTableBucket &currentBucket = tableData.at(index);
         if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
             currentBucket.type = HashTableBucket::BucketType::EAR;
+            return true;
         }
 
         if (currentBucket.type == HashTableBucket::BucketType::ESS){
@@ -176,21 +217,10 @@ bool HashTable::remove(const std::string& key){
             }
 
             newHashTableIndex = offsets.at(offsetIndex);
-            currentBucket = tableData.at(newHashTableIndex);
             index = newHashTableIndex;
         }
     }
-}
-
-std::ostream& operator<<(std::ostream& os, const HashTable& hashTable){
-  for (size_t i=0; i<hashTable.tableData.size(); i++ ){
-      HashTableBucket currentBucket = hashTable.tableData.at(i);
-      os << "Bucket: " << i;
-      os << ", Key: " << currentBucket.key;
-      os << ", Value: " << currentBucket.value << "\n";
-  }
-
-  return os;
+    return false;
 }
 
 double HashTable::alpha() const{
@@ -203,3 +233,13 @@ double HashTable::alpha() const{
     }
 }
 
+std::ostream& operator<<(std::ostream& os, const HashTable& hashTable){
+    for (size_t i=0; i<hashTable.tableData.size(); i++ ){
+        HashTableBucket currentBucket = hashTable.tableData.at(i);
+        os << "Bucket: " << i;
+        os << ", Key: " << currentBucket.key;
+        os << ", Value: " << currentBucket.value << "\n";
+    }
+
+    return os;
+}

@@ -66,9 +66,6 @@ public:
     //[] Overload Method
     size_t& operator[](const std::string& key);
 
-    //Hashing Algorithm Method
-    size_t hash(const std::string& key);
-
     //Keys
     std::vector<std::string> keys() const;
 
