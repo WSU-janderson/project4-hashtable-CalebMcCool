@@ -34,6 +34,7 @@ public:
     HashTableBucket(const std::string& key, const size_t& value);
     void load(const std::string& key, const size_t& value);
     bool isEmpty() const;
+    friend std::ostream& operator<<(std::ostream& os, const HashTableBucket& bucket);
 };
 
 /*
@@ -80,20 +81,6 @@ public:
 
     //os
     friend std::ostream& operator<<(std::ostream& os, const HashTable& hashTable);
-
-    //-- Personal Methods --
-
-    //next bucket according to offset vector
-    //HashTableBucket& nextBucket(size_t index);
-
-    //next bucket with ESS or EAR
-    //HashTableBucket& nextEmptyBucket;
-
-    //next bucket with ESS
-    //HashTableBucket& nextEmptySinceStart;
-
-
-
 
 };
 

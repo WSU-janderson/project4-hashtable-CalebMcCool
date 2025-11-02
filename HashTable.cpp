@@ -13,17 +13,45 @@
 #include <cstdlib>
 #include <ctime>
 
+//Hash Table Bucket Constructor with No Parameters (Empty Bucket)
 HashTableBucket::HashTableBucket() {
     key = "nokeyhere";
     value = 0;
     type = BucketType::ESS;
 }
 
+//Hash Table Bucket Constructor with Parameters
 HashTableBucket::HashTableBucket(const std::string &key, const size_t &value) {
     this->key = key;
     this->value = value;
     type = BucketType::Normal;
 }
+
+void HashTableBucket::load(const std::string& key, const size_t& value){
+    this->key = key;
+    this->value = value;
+    type = BucketType::Normal;
+}
+
+bool HashTableBucket::isEmpty() const{
+    if (type == BucketType::Normal){
+        return false;
+    }
+    if (type == BucketType::ESS | type == BucketType::EAR){
+        return true;
+    }
+    else {
+        //throw exception
+    }
+}
+
+std::ostream& operator<<(std::ostream& os, const HashTableBucket& bucket){
+    os << ", Key: " << bucket.key;
+    os << ", Value: " << bucket.value << "\n";
+    return os;
+}
+
+
 
 HashTable::HashTable(size_t initCapacity){
 
@@ -194,7 +222,10 @@ bool HashTable::remove(const std::string& key){
     while (notFound){
         HashTableBucket &currentBucket = tableData.at(index);
         if ((currentBucket.type == HashTableBucket::BucketType::Normal) && (currentBucket.key == key)){
+            currentBucket.key = "nokeyhere";
+            currentBucket.value = 0;
             currentBucket.type = HashTableBucket::BucketType::EAR;
+            numOfInserts--;
             return true;
         }
 
@@ -328,6 +359,14 @@ double HashTable::alpha() const{
         alpha = static_cast<double>(numOfInserts) / static_cast<double>(tableData.size());
         return alpha;
     }
+}
+
+size_t HashTable::capacity() const {
+    return tableData.size();
+}
+
+size_t HashTable::size() const{
+    return numOfInserts;
 }
 
 std::ostream& operator<<(std::ostream& os, const HashTable& hashTable){
